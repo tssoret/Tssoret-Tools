@@ -1,0 +1,16 @@
+{
+	"addmodtable":  true,
+	"binary":      "rom.gba",
+	"instruments": "0x0032DD04",
+	"krawallver":  "2005-04-21",
+	"modules": [
+		{ "name": "Menu",     "offs": "0x00330650" },
+		{ "name": "Game End", "offs": "0x003C486C" },
+		{ "name": "Relax",    "offs": "0x003C738C" },
+		{ "name": "Voyage",   "offs": "0x003CAA0C" },
+		{ "name": "Wonder",   "offs": "0x003CE6D4" },
+		{ "name": "Tense",    "offs": "0x003D274C" }
+	],
+	"out":     "2716 - Uno Free Fall (Europe)",
+	"samples": "0x003C3418"
+}

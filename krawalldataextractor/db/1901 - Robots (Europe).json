@@ -1,0 +1,33 @@
+{
+	"addmodtable": true,
+	"binary":     "rom.gba",
+	"krawallver": "2003-09-01",
+	"modules": [
+		{ "name": "Module00", "offs": "0x00058AE4" },
+		{ "name": "Module01", "offs": "0x00058E84" },
+		{ "name": "Module02", "offs": "0x0005D620" },
+		{ "name": "Module03", "offs": "0x00064FF8" },
+		{ "name": "Module04", "offs": "0x00066980" },
+		{ "name": "Module05", "offs": "0x0006955C" },
+		{ "name": "Module06", "offs": "0x0006CF34" },
+		{ "name": "Module07", "offs": "0x0006D474" },
+		{ "name": "Module08", "offs": "0x00070ED4" },
+		{ "name": "Module09", "offs": "0x00073FA4" },
+		{ "name": "Module10", "offs": "0x0007B554" },
+		{ "name": "Module11", "offs": "0x0007DC18" },
+		{ "name": "Module12", "offs": "0x0007E0A4" },
+		{ "name": "Module13", "offs": "0x00081FDC" },
+		{ "name": "Module14", "offs": "0x0008617C" },
+		{ "name": "Module15", "offs": "0x0008660C" },
+		{ "name": "Module16", "offs": "0x0008B154" },
+		{ "name": "Module17", "offs": "0x0008EC68" },
+		{ "name": "Module18", "offs": "0x0008F080" },
+		{ "name": "Module19", "offs": "0x000906A8" },
+		{ "name": "Module20", "offs": "0x00091C04" },
+		{ "name": "Module21", "offs": "0x001AF1EC" },
+		{ "name": "Module22", "offs": "0x001B4A30" },
+		{ "name": "Module23", "offs": "0x001B9C44" }
+	],
+	"out":     "1901 - Robots (Europe)",
+	"samples": "0x001AE8C8"
+}
