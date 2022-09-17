@@ -28,8 +28,8 @@
 	Script Name:     Krawall Module Extractor
 	Script Purpose:  Extracts the Modules from games using the Krawall Sound Engine back to a similar format like Krawerter does. (https://github.com/sebknzl/krawall/tree/master/krawerter)
 	Script Creator:  SuperSaiyajinStackZ
-	Last Updated:    14. August 2022
-	Version:         0.1
+	Last Updated:    17. September 2022
+	Version:         0.2
 	Additional Note: You have to provide the address to the Module by yourself, including a module name, like ModuleXX for example and the used Krawall Version.
 					 There is no "Universal" way to detect where all modules are stored, so the best way is to check for references to krapPlay and see what gets passed in
 					 as the first argument, which is a Module* pointer.
@@ -65,12 +65,14 @@ const dataPerLine      = 0x40; // 64 bytes per line.
 const patternPerLine   = 0x8;  // 8 pattern per line.
 
 
-/*
-	A small helper function to check for valid Header Guard characters.
-	Only allow 0 - 9, A - Z, a - z and _.
-
-	c: The character to check.
-*/
+/**
+ * A small helper function to check for valid Header Guard characters.
+ * Only allow 0 - 9, A - Z, a - z and _.
+ * 
+ * @param c The character to check.
+ * 
+ * @returns if c is valid.
+ */
 function checkHeaderValidate(c) {
 	return (c >= "0" && c <= "9") || (c >= "A" && c <= "Z") || (c >= "a" && c <= "z") || c == "_";
 }
@@ -84,15 +86,14 @@ export class KrawallModuleExtractor {
 	#modName;      // Module base Name.
 	#ver;          // Krawall version.
 
-
-	/*
-		Initialize some variables for this class.
-
-		View: A reference to an initialized DataView.
-		moduleOffs: Address to the Module.
-		moduleName: The name of the Module. Use ModuleXX or so, if you are unsure about the name.
-		ver: The version of Krawall that is being used as a string with "YEAR-MONTH-DAY".
-	*/
+	/**
+	 * Initialize some variables for this class.
+	 * 
+	 * @param view       A reference to an initialized DataView.
+	 * @param moduleOffs The Address to the Module.
+	 * @param moduleName The name of the Module. Use ModuleXX or so, if you are unsure about the name.
+	 * @param ver        The version of Krawall that is being used as a string with "YEAR-MONTH-DAY".
+	 */
 	constructor(view, moduleOffs, moduleName, ver) {
 		this.#view = view;
 
@@ -121,12 +122,12 @@ export class KrawallModuleExtractor {
 	}
 
 
-	/*
-		Use this, if you want to change the Module Offset and it's name.
-
-		moduleOffs: The offset to the Module.
-		moduleName: The name of the Module.
-	*/
+	/**
+	 * Use this, if you want to change the Module Offset and it's name.
+	 * 
+	 * @param moduleOffs The offset to the Module.
+	 * @param moduleName The name of the Module.
+	 */
 	setModule(moduleOffs, moduleName) {
 		this.#patternCount = 0;
 		this.#modOffs      = moduleOffs;
@@ -155,18 +156,35 @@ export class KrawallModuleExtractor {
 		this.#modGuardName += "_H__";
 	}
 
-
-	/* Some returns. */
+	/**
+	 * Returns the Module name.
+	 * 
+	 * @returns The name of the module.
+	 */
 	getModName()      { return this.#modName; }
+
+	/**
+	 * Get the amount of pattern of the Module.
+	 * 
+	 * @returns The amount of patterns from the Module.
+	 */
 	getPatternCount() { return this.#patternCount; }
+
+	/**
+	 * Get if a valid Krawall version has been provided.
+	 * 
+	 * @returns If a valid Krawall version has been provided.
+	 */
 	getKrawallValid() { return this.#ver != 0; }
 
 
-	/*
-		Extracts the ptrnIdx'd pattern.
-
-		ptrnIdx: The index from the pattern table.
-	*/
+	/**
+	 * Extracts the ptrnIdx'd pattern.
+	 * 
+	 * @param ptrnIdx The index from the pattern table.
+	 * 
+	 * @returns A string containing the assembly data for the pattern.
+	 */
 	extractPattern(ptrnIdx) {
 		if (ptrnIdx >= this.#patternCount || this.#ver == 0) return "";
 
@@ -221,7 +239,11 @@ export class KrawallModuleExtractor {
 	}
 
 
-	/* Extracts all patterns and creates the "module.S" file. */
+	/**
+	 * Extracts all patterns and creates the "module.S" file.
+	 * 
+	 * @returns A string containing the assembly data of the Module.
+	 */
 	extractModule() {
 		if (this.#patternCount <= 0 || this.#ver == 0) return "";
 		
@@ -287,7 +309,6 @@ export class KrawallModuleExtractor {
 							  + this.#view.getUint8(this.#modOffs + flagAmigaLimits).toString() + ", "
 							  + this.#view.getUint8(this.#modOffs + padding).toString();
 
-
 		/* And now the Patterns. */
 		moduleOut += "\n.word ";
 		for (let idx = 0, lineCount = 0; idx < this.#patternCount; idx++) {
@@ -312,15 +333,16 @@ export class KrawallModuleExtractor {
 	}
 
 
-	/*
-		Creates the header file for the current Module that you can use in your project.
-		
-		Only useful if you have a single module! You can see KrawallDataExtractor.js on the Module section how to have multiple Module external declarations instead.
-	*/
+	/**
+	 * Creates the header file for the current Module that you can use in your project.
+	 * Only useful if you have a single module!
+	 * 
+	 * @returns A string containing the C header data.
+	 */
 	createModuleHeader() {
 		let headerOut = "#ifndef " + this.#modGuardName + "\n#define " + this.#modGuardName + "\n\n"; // Define the Header Guard.
 		headerOut    += "extern const Module mod_" + this.#modName + ";\n";
-		headerOut    += "\n#endif\n";
+		headerOut    += "\n#endif";
 		return headerOut;
 	}
 };

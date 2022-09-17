@@ -28,8 +28,8 @@
 	Script Name:     Krawall Sample Extractor
 	Script Purpose:  Extracts the Samples from games using the Krawall Sound Engine back to a similar format like Krawerter does. (https://github.com/sebknzl/krawall/tree/master/krawerter)
 	Script Creator:  SuperSaiyajinStackZ
-	Last Updated:    14. August 2022
-	Version:         0.1
+	Last Updated:    17. September 2022
+	Version:         0.2
 	Additional Note: You need to provide the Sample Table Offset to make it work.
 	                 You can usually find the table by looking for the krapInstPlay function where it gets the sample, or the processRow function of Krawall.
 					 If the table has no valid ROM address pointers, then no samples exist.
@@ -60,13 +60,12 @@ export class KrawallSampleExtractor {
 	#table; // Samples Pointer Table address.
 	#count; // Amount of Samples.
 
-
-	/*
-		Initialize some variables for this class.
-
-		view: A reference to an initialized DataView.
-		table: Address to the Samples Pointer table.
-	*/
+	/**
+	 * Initialize some variables for this class.
+	 * 
+	 * @param view  A reference to an initialized DataView.
+	 * @param table The Address to the Samples Pointer table.
+	 */
 	constructor(view, table) {
 		/* You can also pass null and the functionality for empty samples data works too. */
 		if (table == undefined || table == null) {
@@ -91,15 +90,21 @@ export class KrawallSampleExtractor {
 	}
 
 
-	/* Returns the count of the Samples that was found. */
+	/**
+	 * Get the count of the Samples that was found.
+	 *
+	 * @returns The amount of samples that were found.
+	 */
 	sampleCount() { return this.#count; }
 
 
-	/*
-		Extracts the sampleIdx'd sample.
-
-		sampleIdx: The index from the sample table.
-	*/
+	/**
+	 * Extracts the sampleIdx'd sample.
+	 * 
+	 * @param sampleIdx The index from the sample table.
+	 * 
+	 * @returns A string containing the assembly data for the sample.
+	 */
 	extractSample(sampleIdx) {
 		if (sampleIdx >= this.#count) return ""; // Check for the index.
 
@@ -165,7 +170,11 @@ export class KrawallSampleExtractor {
 		return sampleOut;
 	}
 
-	/* Extracts all Samples and creates the "samples.S" file. */
+	/**
+	 * Extracts all Samples and creates the "samples.S" file.
+	 * 
+	 * @returns A string containing the assembly data for all samples.
+	 */
 	extractSamples() {
 		if (this.#count <= 0) return ".global samples\n.section .rodata\n\n.align\n\nsamples:\n.word\n"; // Return empty samples.
 
@@ -199,22 +208,35 @@ export class KrawallSampleExtractor {
 	}
 
 
-	/* Creates an empty header. */
-	createHeaderEmpty() { return "#ifndef __SAMPLES_H__\n#define __SAMPLES_H__\n\n#endif\n"; }
+	/**
+	 * Creates an empty C-header.
+	 * 
+	 * @returns A string containing the C header data.
+	 */
+	#createHeaderEmpty() { return "#ifndef __SAMPLES_H__\n#define __SAMPLES_H__\n\n#endif"; }
 
-	/* Creates the header file for the Samples that you can use in your project. */
-	createHeader() {
-		if (this.#count <= 0) return this.createHeaderEmpty();
+	/**
+	 * Creates the C-header file for the Samples that you can use in your project.
+	 * 
+	 * @param includeCount if including the #define SAMPLES_COUNT or not.
+	 * 
+	 * @returns A string containing the C header data.
+	 */
+	createHeader(includeCount) {
+		if (this.#count <= 0) return this.#createHeaderEmpty();
 
-		let headerOut   = "#ifndef __SAMPLES_H__\n#define __SAMPLES_H__\n\n"; // Define the Header Guard.
-		const defineLen = ("#define SAMPLE_SAMPLE" + Math.max(0, this.#count - 1).toString()).length;
+		let   headerOut = "#ifndef __SAMPLES_H__\n#define __SAMPLES_H__\n\n"; // Define the Header Guard.
+		const maxNumLen = Math.max(0, this.#count - 1).toString().length;
+		
+		if (includeCount != undefined && includeCount == true) {
+			headerOut += "#define SAMPLES_COUNT " + this.#count.toString() + "\n\n"; // Not available normally in Krawerter, but i find that a nice bonus definition.
+		}
 
 		/* Add the sample index definitions. */
-		headerOut += "#define SAMPLE_COUNT".padEnd(defineLen + 1, " ") + this.#count.toString() + "\n"; // Not available normally in Krawerter, but i find that a nice bonus definition.
-		for (let idx = 0; idx < this.#count; idx++) headerOut += ("#define SAMPLE_SAMPLE" + idx.toString()).padEnd(defineLen + 1, " ") + idx.toString() + "\n";
+		for (let idx = 0; idx < this.#count; idx++) headerOut += ("#define SAMPLES_SAMPLE_" + idx.toString().padStart(maxNumLen, "0")) + " " + idx.toString() + "\n";
 
 		/* End the Header Guard. */
-		headerOut += "\n#endif\n";
+		headerOut += "\n#endif";
 		return headerOut;
 	}
 };

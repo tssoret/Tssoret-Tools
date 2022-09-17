@@ -28,8 +28,8 @@
 	Script Name:     Krawall Instrument Extractor
 	Script Purpose:  Extracts the Instruments from the Krawall Sound Engine back to a similar format like Krawerter does. (https://github.com/sebknzl/krawall/tree/master/krawerter)
 	Script Creator:  SuperSaiyajinStackZ
-	Last Updated:    14. August 2022
-	Version:         0.1
+	Last Updated:    17. September 2022
+	Version:         0.2
 	Additional Note: You need to provide the Instrument Table Offset to make it work.
 					 You can usually find the table by looking for the processRow function where it gets the instrument,
 					 if the table has no valid ROM address pointers, then no instruments exist.
@@ -55,12 +55,11 @@ export class KrawallInstrumentExtractor {
 	#table; // Instrument Pointer Table address.
 	#count; // Amount of Instruments.
 
-
-	/*
-		Initialize some variables for this class.
-
-		View: A reference to an initialized DataView.
-		Table: Address to the Instrument Pointer table.
+	/**
+	 * Initialize some variables for this class.
+	 * 
+	 * @param view  A reference to an initialized DataView.
+	 * @param table The Address to the Instrument Pointer table.
 	*/
 	constructor(view, table) {
 		/* You can also pass null and the functionality for empty instrument data works too. */
@@ -86,14 +85,20 @@ export class KrawallInstrumentExtractor {
 	}
 
 
-	/* Returns the count of the Instruments that was found. */
+	/**
+	 * Returns the count of the Instruments that was found.
+	 * 
+	 * @returns The amount of instruments that were found.
+	 */
 	instrumentCount() { return this.#count; }
 
 
-	/*
-		Extracts the instrIdx'd instrument.
-
-		instrIdx: The index from the instrument table.
+	/**
+	 * Extracts the instrIdx'd instrument.
+	 * 
+	 * @param instrIdx The index of the instrument from the instruments table.
+	 * 
+	 * @returns A string containing the assembly data for the Instrument.
 	*/
 	extractInstrument(instrIdx) {
 		if (instrIdx >= this.#count) return ""; // Check for the count.
@@ -147,8 +152,11 @@ export class KrawallInstrumentExtractor {
 		return instrOut;
 	}
 
-
-	/* Extracts all Instruments and creates the "instruments.S" file. */
+	/**
+	 * Extracts all Instruments and creates the "instruments.S" file.
+	 *
+	 * @returns A string containing the assembly data for the instruments.
+	 */
 	extractInstruments() {
 		if (this.#count <= 0) return ".global instruments\n.section .rodata\n\n.align\n\ninstruments:\n.word\n"; // Return empty instruments.
 
@@ -181,23 +189,35 @@ export class KrawallInstrumentExtractor {
 		return outdata;
 	}
 
+	/**
+	 * Creates an empty C-header.
+	 * 
+	 * @returns A string containing the C header data.
+	 */
+	#createHeaderEmpty() { return "#ifndef __INSTRUMENTS_H__\n#define __INSTRUMENTS_H__\n\n#endif"; }
 
-	/* Creates an empty header. */
-	createHeaderEmpty() { return "#ifndef __INSTRUMENTS_H__\n#define __INSTRUMENTS_H__\n\n#endif\n"; }
+	/**
+	 * Creates the C-header file for the Instruments that you can use in your project.
+	 * 
+	 * @param includeCount if including the #define INSTRUMENTS_COUNT or not.
+	 * 
+	 * @returns A string containing the C header data.
+	 */
+	createHeader(includeCount) {
+		if (this.#count <= 0) return this.#createHeaderEmpty();
 
-	/* Creates the header file for the Instruments that you can use in your project. */
-	createHeader() {
-		if (this.#count <= 0) return this.createHeaderEmpty();
+		let   headerOut = "#ifndef __INSTRUMENTS_H__\n#define __INSTRUMENTS_H__\n\n"; // Define the Header Guards.
+		const maxNumLen = Math.max(0, this.#count - 1).toString().length;
 
-		let headerOut   = "#ifndef __INSTRUMENTS_H__\n#define __INSTRUMENTS_H__\n\n"; // Define the Header Guards.
-		const defineLen = ("#define INSTRUMENT_INSTRUMENT" + Math.max(0, this.#count - 1).toString()).length;
-
+		if (includeCount != undefined && includeCount == true) {
+			headerOut += "#define INSTRUMENTS_COUNT " + this.#count.toString() + "\n\n"; // Not available normally in Krawerter, but i find that a nice bonus definition.
+		}
+		
 		/* Add the instrument definitions. */
-		headerOut += "#define INSTRUMENT_COUNT".padEnd(defineLen + 1, " ") + this.#count.toString() + "\n"; // Not available normally in Krawerter, but i find that a nice bonus definition.
-		for (let idx = 0; idx < this.#count; idx++) headerOut += ("#define INSTRUMENT_INSTRUMENT" + idx.toString()).padEnd(defineLen + 1, " ") + idx.toString() + "\n";
+		for (let idx = 0; idx < this.#count; idx++) headerOut += ("#define INSTRUMENTS_INSTRUMENT_" + idx.toString().padStart(maxNumLen, "0")) + " " + idx.toString() + "\n";
 		
 		/* End the Header Guard. */
-		headerOut += "\n#endif\n";
+		headerOut += "\n#endif";
 		return headerOut;
 	}
 };

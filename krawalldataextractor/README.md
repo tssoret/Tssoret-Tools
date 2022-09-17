@@ -203,7 +203,7 @@ else {
 				Deno.writeTextFileSync(outFolder + "/" + table.out + "/" + instrumentsDataPath + "/instruments.S", instrumentData);
 
 				/* Create a C / C++ compatible Header file. */
-				const headerData = instance.createHeader();
+				const headerData = instance.createHeader(true); // true adds a count define too.
 				Deno.writeTextFileSync(outFolder + "/" + table.out + "/" + krawallHeaderBasePath + "/instruments.h", headerData);
 			}
 
@@ -254,7 +254,7 @@ else {
 							headerData += "extern const Module *mod_Table[];\n";
 						}
 
-						headerData += "\n#endif\n";
+						headerData += "\n#endif";
 						Deno.writeTextFileSync(outFolder + "/" + table.out + "/" + krawallHeaderBasePath + "/modules.h", headerData);
 					}
 				}
@@ -270,7 +270,7 @@ else {
 				Deno.writeTextFileSync(outFolder + "/" + table.out + "/" + samplesDataPath + "/samples.S", sampleData);
 
 				/* Create a C / C++ compatible Header file. */
-				const headerData = instance.createHeader();
+				const headerData = instance.createHeader(true); // true adds a count define too.
 				Deno.writeTextFileSync(outFolder + "/" + table.out + "/" + krawallHeaderBasePath + "/samples.h", headerData);
 			}
 
@@ -305,8 +305,8 @@ After that, you'll run `Deno run <ExampleFile>.js -i <JSON Data Files> -o <Outpu
 
 ## Script Credits
 - Contributors: [SuperSaiyajinStackZ](https://github.com/SuperSaiyajinStackZ)
-- Last Updated: 14. August 2022
+- Last Updated: 17. September 2022
 - Purpose: Extract instruments, modules and samples from games using the [GBA Sound Engine, Krawall](https://github.com/sebknzl/krawall).
-- Version: v0.1
+- Version: v0.2
 
 ---
