@@ -17,5 +17,15 @@ For more information, check out the [Krawall Data Extractor](krawalldataextracto
 
 ---
 
+
+### Griptonite Text Tools
+These tools are used to work with Griptonite's Internal Text format.
+
+For more information, check out the [GPNTTextTools](gpnttexttools) directory.
+
+---
+
+
 ## Credits
+- [Epicpkmn11](https://github.com/Epicpkmn11)
 - [SuperSaiyajinStackZ](https://github.com/SuperSaiyajinStackZ): Main Maintainer for the scripts.
