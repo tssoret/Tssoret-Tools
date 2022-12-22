@@ -28,7 +28,7 @@
 	Script Name:     Krawall Module Extractor
 	Script Purpose:  Extracts the Modules from games using the Krawall Sound Engine back to a similar format like Krawerter does. (https://github.com/sebknzl/krawall/tree/master/krawerter)
 	Script Creator:  SuperSaiyajinStackZ
-	Last Updated:    17. September 2022
+	Last Updated:    22. December 2022
 	Version:         0.2
 	Additional Note: You have to provide the address to the Module by yourself, including a module name, like ModuleXX for example and the used Krawall Version.
 					 There is no "Universal" way to detect where all modules are stored, so the best way is to check for references to krapPlay and see what gets passed in
@@ -100,6 +100,7 @@ export class KrawallModuleExtractor {
 		/* check the version string of Krawall. */
 		switch(ver) {
 			/* The 2003 version is not compatible with all the others, because the pattern format is different and the bit size for the rows. */
+			case "2003-03-19":
 			case "2003-09-01":
 				this.#ver = 1;
 				break;

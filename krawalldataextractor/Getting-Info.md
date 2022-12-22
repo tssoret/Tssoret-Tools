@@ -61,6 +61,8 @@ If you found that string, then congrats, the game uses the Krawall Sound Engine!
 
     - You SHOULD note the date, as you'll need it for the Krawall Data Extractor if you plan to use it.
     
+***New Note: It seems like `Krawall` may not exist on the version string as noticed on `The Sims: Bustin' Out GBA (EUR/USA)`, it contains: `$Id: player.c,v 1.4 2003/03/19 23:12:15 seb Exp $`.***
+
 ---
 
 ## Samples

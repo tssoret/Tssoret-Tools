@@ -13,7 +13,7 @@
 {
 	"addmodtable": true,
 	"binary":     "rom.gba",
-	"krawallver": "2003-09-01",
+	"krawallver": "2003-03-19",
 	"modules": [
 		{ "name": "Module00", "offs": "0x00AFB704" },
 		{ "name": "Module01", "offs": "0x00AFC000" },
